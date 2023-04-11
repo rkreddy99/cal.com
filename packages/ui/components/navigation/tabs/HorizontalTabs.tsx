@@ -5,9 +5,10 @@ export interface NavTabProps {
   tabs: HorizontalTabItemProps[];
   linkProps?: HorizontalTabItemProps["linkProps"];
   actions?: JSX.Element;
+  isRoutingFormsTabs?: boolean;
 }
 
-const HorizontalTabs = function ({ tabs, linkProps, actions, ...props }: NavTabProps) {
+const HorizontalTabs = function ({ tabs, linkProps, actions, isRoutingFormsTabs, ...props }: NavTabProps) {
   return (
     <div className="mb-4 h-9 max-w-[calc(100%+40px)] lg:mb-5">
       <nav
@@ -15,7 +16,7 @@ const HorizontalTabs = function ({ tabs, linkProps, actions, ...props }: NavTabP
         aria-label="Tabs"
         {...props}>
         {tabs.map((tab, idx) => (
-          <HorizontalTabItem {...tab} key={idx} {...linkProps} />
+          <HorizontalTabItem isRoutingFormsTabs={isRoutingFormsTabs} {...tab} key={idx} {...linkProps} />
         ))}
       </nav>
       {actions && actions}

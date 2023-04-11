@@ -12,11 +12,12 @@ import {
   Button,
   EmptyScreen,
   FormCard,
+  Label,
   SelectField,
-  TextAreaField,
+  Skeleton,
   TextField,
 } from "@calcom/ui";
-import { FiPlus, FiFileText } from "@calcom/ui/components/icon";
+import { FiPlus, FiFileText, FiX } from "@calcom/ui/components/icon";
 
 import type { inferSSRProps } from "@lib/types/inferSSRProps";
 
@@ -27,6 +28,7 @@ import SingleForm, {
 
 export { getServerSideProps };
 type HookForm = UseFormReturn<RoutingFormWithResponseCount>;
+type SelectOption = { placeholder: string; value: string };
 
 export const FieldTypes = [
   {
@@ -42,7 +44,7 @@ export const FieldTypes = [
     value: "textarea",
   },
   {
-    label: "Select",
+    label: "Single selection",
     value: "select",
   },
   {
@@ -85,30 +87,78 @@ function Field({
   };
   appUrl: string;
 }) {
-  const [identifier, _setIdentifier] = useState(hookForm.getValues(`${hookFieldNamespace}.identifier`));
   const { t } = useLocale();
 
-  const setUserChangedIdentifier = (val: string) => {
-    _setIdentifier(val);
-    // Also, update the form identifier so tha it can be persisted
-    hookForm.setValue(`${hookFieldNamespace}.identifier`, val);
+  const [options, setOptions] = useState<SelectOption[]>([
+    { placeholder: "< 10", value: "" },
+    { placeholder: "10-100", value: "" },
+    { placeholder: "100-500", value: "" },
+    { placeholder: "> 500", value: "" },
+  ]);
+
+  const handleRemoveOptions = (index: number) => {
+    const updatedOptions = options.filter((_, i) => i !== index);
+    setOptions(updatedOptions);
+    updateSelectText(updatedOptions);
   };
 
-  const label = hookForm.watch(`${hookFieldNamespace}.label`);
+  const handleAddOptions = () => {
+    setOptions((prevState) => [
+      ...prevState,
+      {
+        placeholder: "New Option",
+        value: "",
+      },
+    ]);
+  };
 
   useEffect(() => {
-    if (!hookForm.getValues(`${hookFieldNamespace}.identifier`)) {
-      _setIdentifier(label);
+    const originalValues = hookForm.getValues(`${hookFieldNamespace}.selectText`);
+    if (originalValues) {
+      const values: SelectOption[] = originalValues.split("\n").map((fieldValue) => {
+        return {
+          value: fieldValue,
+          placeholder: "",
+        };
+      });
+      setOptions(values);
     }
-  }, [label, hookFieldNamespace, hookForm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const router = hookForm.getValues(`${hookFieldNamespace}.router`);
   const routerField = hookForm.getValues(`${hookFieldNamespace}.routerField`);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, optionIndex: number) => {
+    const updatedOptions = options.map((opt, index) => {
+      if (index === optionIndex) {
+        return {
+          ...opt,
+          value: e.target.value,
+        };
+      } else {
+        return opt;
+      }
+    });
+    setOptions(updatedOptions);
+    updateSelectText(updatedOptions);
+  };
+
+  const updateSelectText = (updatedOptions: SelectOption[]) => {
+    hookForm.setValue(
+      `${hookFieldNamespace}.selectText`,
+      updatedOptions
+        .filter((opt) => opt.value)
+        .map((opt) => opt.value)
+        .join("\n")
+    );
+  };
   return (
     <div
       data-testid="field"
-      className="group mb-4 flex w-full items-center justify-between ltr:mr-2 rtl:ml-2">
+      className="bg-default group mb-4 flex w-full items-center justify-between ltr:mr-2 rtl:ml-2">
       <FormCard
-        label={label || `Field ${fieldIndex + 1}`}
+        label={`Form ${fieldIndex + 1}`}
         moveUp={moveUp}
         moveDown={moveDown}
         badge={
@@ -120,6 +170,7 @@ function Field({
             <TextField
               disabled={!!router}
               label="Label"
+              className="flex-grow"
               placeholder={t("this_is_what_your_users_would_see")}
               /**
                * This is a bit of a hack to make sure that for routerField, label is shown from there.
@@ -128,27 +179,6 @@ function Field({
               defaultValue={routerField?.label}
               required
               {...hookForm.register(`${hookFieldNamespace}.label`)}
-            />
-          </div>
-          <div className="mb-6 w-full">
-            <TextField
-              disabled={!!router}
-              label="Identifier"
-              name="identifier"
-              required
-              placeholder={t("identifies_name_field")}
-              value={identifier}
-              defaultValue={routerField?.identifier || routerField?.label}
-              onChange={(e) => setUserChangedIdentifier(e.target.value)}
-            />
-          </div>
-          <div className="mb-6 w-full">
-            <TextField
-              disabled={!!router}
-              label={t("placeholder")}
-              placeholder={t("this_will_be_the_placeholder")}
-              defaultValue={routerField?.placeholder}
-              {...hookForm.register(`${hookFieldNamespace}.placeholder`)}
             />
           </div>
           <div className="mb-6 w-full ">
@@ -160,6 +190,17 @@ function Field({
                 const defaultValue = FieldTypes.find((fieldType) => fieldType.value === value);
                 return (
                   <SelectField
+                    maxMenuHeight={200}
+                    styles={{
+                      singleValue: (baseStyles) => ({
+                        ...baseStyles,
+                        fontSize: "14px",
+                      }),
+                      option: (baseStyles) => ({
+                        ...baseStyles,
+                        fontSize: "14px",
+                      }),
+                    }}
                     label="Type"
                     isDisabled={!!router}
                     containerClassName="data-testid-field-type"
@@ -177,21 +218,48 @@ function Field({
             />
           </div>
           {["select", "multiselect"].includes(hookForm.watch(`${hookFieldNamespace}.type`)) ? (
-            <div className="mt-2 block items-center sm:flex">
-              <div className="w-full">
-                <TextAreaField
-                  disabled={!!router}
-                  rows={3}
-                  label="Options"
-                  defaultValue={routerField?.selectText}
-                  placeholder={t("add_1_option_per_line")}
-                  {...hookForm.register(`${hookFieldNamespace}.selectText`)}
-                />
+            <div className="mt-2 w-full">
+              <Skeleton as={Label} loadingClassName="w-16" title={t("Options")}>
+                {t("options")}
+              </Skeleton>
+              {options.map((field, index) => (
+                <div key={`select-option-${index}`}>
+                  <TextField
+                    containerClassName="[&>*:first-child]:border [&>*:first-child]:border-default hover:[&>*:first-child]:border-gray-400"
+                    className="border-0"
+                    labelSrOnly
+                    placeholder={field.placeholder.toString()}
+                    value={field.value}
+                    type="text"
+                    addOnClassname="bg-transparent !p-2 border-0"
+                    onChange={(e) => handleChange(e, index)}
+                    addOnSuffix={
+                      <button
+                        className="mt-1"
+                        type="button"
+                        onClick={() => handleRemoveOptions(index)}
+                        aria-label={t("remove")}>
+                        <FiX />
+                      </button>
+                    }
+                  />
+                </div>
+              ))}
+              <div className={classNames("flex")}>
+                <Button
+                  data-testid="add-attribute"
+                  className="border-none"
+                  type="button"
+                  StartIcon={FiPlus}
+                  color="secondary"
+                  onClick={handleAddOptions}>
+                  Add an attribute
+                </Button>
               </div>
             </div>
           ) : null}
 
-          <div className="w-full">
+          <div className="w-[106px]">
             <Controller
               name={`${hookFieldNamespace}.required`}
               control={hookForm.control}
@@ -199,6 +267,7 @@ function Field({
               render={({ field: { value, onChange } }) => {
                 return (
                   <BooleanToggleGroupField
+                    isSmaller
                     disabled={!!router}
                     label={t("required")}
                     value={value}
@@ -256,7 +325,7 @@ const FormEdit = ({
   return hookFormFields.length ? (
     <div className="flex flex-col-reverse lg:flex-row">
       <div className="w-full ltr:mr-2 rtl:ml-2">
-        <div ref={animationRef} className="flex w-full flex-col">
+        <div ref={animationRef} className="flex w-full flex-col rounded-md">
           {hookFormFields.map((field, key) => {
             return (
               <Field
@@ -298,7 +367,7 @@ const FormEdit = ({
               StartIcon={FiPlus}
               color="secondary"
               onClick={addField}>
-              Add Field
+              Add form
             </Button>
           </div>
         ) : null}
@@ -307,6 +376,7 @@ const FormEdit = ({
   ) : (
     <div className="w-full">
       <EmptyScreen
+        bgWhite
         Icon={FiFileText}
         headline="Create your first field"
         description="Fields are the form fields that the booker would see."

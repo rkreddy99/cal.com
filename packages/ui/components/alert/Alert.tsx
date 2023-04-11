@@ -1,6 +1,7 @@
 import { CheckCircleIcon, ExclamationIcon, InformationCircleIcon, XCircleIcon } from "@heroicons/react/solid";
 import classNames from "classnames";
 import type { ReactNode } from "react";
+import type { IconType } from "react-icons";
 
 import { FiInfo } from "../icon";
 
@@ -14,9 +15,10 @@ export interface AlertProps {
   iconClassName?: string;
   // @TODO: Success and info shouldn't exist as per design?
   severity: "success" | "warning" | "error" | "info" | "neutral";
+  CustomIcon?: IconType;
 }
 export function Alert(props: AlertProps) {
-  const { severity, iconClassName } = props;
+  const { severity, iconClassName, CustomIcon } = props;
 
   return (
     <div
@@ -30,29 +32,39 @@ export function Alert(props: AlertProps) {
         severity === "neutral" && "bg-subtle text-default border-none"
       )}>
       <div className="relative flex flex-col md:flex-row">
-        <div className="flex-shrink-0">
-          {severity === "error" && (
-            <XCircleIcon className={classNames("h-5 w-5 text-red-400", iconClassName)} aria-hidden="true" />
-          )}
-          {severity === "warning" && (
-            <ExclamationIcon
-              className={classNames("h-5 w-5 text-yellow-400", iconClassName)}
-              aria-hidden="true"
-            />
-          )}
-          {severity === "info" && (
-            <InformationCircleIcon
-              className={classNames("h-5 w-5 text-sky-400", iconClassName)}
-              aria-hidden="true"
-            />
-          )}
-          {severity === "neutral" && (
-            <FiInfo className={classNames("text-default h-5 w-5", iconClassName)} aria-hidden="true" />
-          )}
-          {severity === "success" && (
-            <CheckCircleIcon className={classNames("text-muted h-5 w-5", iconClassName)} aria-hidden="true" />
-          )}
-        </div>
+        {CustomIcon ? (
+          <div className="flex-shrink-0">
+            <CustomIcon aria-hidden="true" className={classNames("text-default h-5 w-5", iconClassName)} />
+          </div>
+        ) : (
+          <div className="flex-shrink-0">
+            {severity === "error" && (
+              <XCircleIcon className={classNames("h-5 w-5 text-red-400", iconClassName)} aria-hidden="true" />
+            )}
+            {severity === "warning" && (
+              <ExclamationIcon
+                className={classNames("h-5 w-5 text-yellow-400", iconClassName)}
+                aria-hidden="true"
+              />
+            )}
+            {severity === "info" && (
+              <InformationCircleIcon
+                className={classNames("h-5 w-5 text-sky-400", iconClassName)}
+                aria-hidden="true"
+              />
+            )}
+            {severity === "neutral" && (
+              <FiInfo className={classNames("text-default h-5 w-5", iconClassName)} aria-hidden="true" />
+            )}
+            {severity === "success" && (
+              <CheckCircleIcon
+                className={classNames("text-muted h-5 w-5", iconClassName)}
+                aria-hidden="true"
+              />
+            )}
+          </div>
+        )}
+
         <div className="ml-3 flex-grow">
           <h3 className="text-sm font-medium">{props.title}</h3>
           <div className="text-sm">{props.message}</div>
