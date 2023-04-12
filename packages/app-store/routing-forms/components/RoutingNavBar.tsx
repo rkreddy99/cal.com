@@ -11,7 +11,7 @@ export default function RoutingNavBar({
 }) {
   const tabs = [
     {
-      name: "Forms",
+      name: "@ Forms",
       href: `${appUrl}/form-edit/${form?.id}`,
     },
     {

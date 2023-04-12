@@ -67,7 +67,7 @@ export default function FormCard({
               deleteField?.fn();
             }}
             color="secondary">
-            <FiTrash2 className="text-muted h-4 w-4" />
+            <FiTrash2 className="text h-4 w-4" />
           </button>
         </div>
         <Divider className="mt-3 mb-6" />

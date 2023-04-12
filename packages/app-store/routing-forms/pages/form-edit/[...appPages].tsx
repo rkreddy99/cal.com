@@ -226,7 +226,7 @@ function Field({
                 <div key={`select-option-${index}`}>
                   <TextField
                     containerClassName="[&>*:first-child]:border [&>*:first-child]:border-default hover:[&>*:first-child]:border-gray-400"
-                    className="border-0"
+                    className="border-0 focus:ring-0 focus:ring-offset-0"
                     labelSrOnly
                     placeholder={field.placeholder.toString()}
                     value={field.value}
