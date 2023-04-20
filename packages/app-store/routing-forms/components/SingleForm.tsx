@@ -34,7 +34,14 @@ import {
   Tooltip,
   VerticalDivider,
 } from "@calcom/ui";
-import { ExternalLink, Link as LinkIcon, Download, Code, Trash } from "@calcom/ui/components/icon";
+import {
+  ExternalLink,
+  Link as LinkIcon,
+  Download,
+  Code,
+  Trash,
+  MessageCircle,
+} from "@calcom/ui/components/icon";
 
 import { RoutingPages } from "../lib/RoutingPages";
 import { getSerializableForm } from "../lib/getSerializableForm";
@@ -280,6 +287,7 @@ function SingleForm({ form, appUrl, Page }: SingleFormComponentProps) {
         <FormActionsProvider appUrl={appUrl}>
           <Meta title={form.name} description={form.description || ""} />
           <ShellMain
+            upButton={!!form.description?.length}
             heading={form.name}
             subtitle={form.description || ""}
             backPath={`/${appUrl}/forms`}
@@ -289,6 +297,7 @@ function SingleForm({ form, appUrl, Page }: SingleFormComponentProps) {
                 <div className="lg:min-w-72 lg:max-w-72 mb-6 md:mr-6">
                   <TextField
                     type="text"
+                    label="Routing forms"
                     containerClassName="mb-6"
                     placeholder={t("title")}
                     {...hookForm.register("name")}
@@ -371,18 +380,26 @@ function SingleForm({ form, appUrl, Page }: SingleFormComponentProps) {
                       {t("test_preview")}
                     </Button>
                   </div>
+                  {!form.routes && (
+                    <Alert
+                      className="mt-6 !bg-orange-100 font-semibold text-orange-900"
+                      iconClassName="!text-orange-900"
+                      severity="neutral"
+                      title={t("no_routes_defined")}
+                    />
+                  )}
                   {!form._count?.responses && (
                     <>
                       <Alert
-                        className="mt-6"
+                        className="mt-2 px-4 py-3"
                         severity="neutral"
                         title={t("no_responses_yet")}
-                        message={t("responses_collection_waiting_description")}
+                        CustomIcon={MessageCircle}
                       />
                     </>
                   )}
                 </div>
-                <div className="border-subtle w-full rounded-md border p-8">
+                <div className="border-subtle bg-muted w-full rounded-md border p-8">
                   <RoutingNavBar appUrl={appUrl} form={form} />
                   <Page hookForm={hookForm} form={form} appUrl={appUrl} />
                 </div>

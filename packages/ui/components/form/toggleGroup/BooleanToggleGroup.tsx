@@ -16,12 +16,14 @@ export const BooleanToggleGroup = function BooleanToggleGroup({
   disabled = false,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   onValueChange = () => {},
+  isSmaller,
   ...passThrough
 }: {
   defaultValue?: boolean;
   value?: boolean;
   onValueChange?: (value?: boolean) => void;
   disabled?: boolean;
+  isSmaller?: boolean;
 }) {
   // Maintain a state because it is not necessary that onValueChange the parent component would re-render. Think react-hook-form
   // Also maintain a string as boolean isn't accepted as ToggleGroupPrimitive value
@@ -33,9 +35,11 @@ export const BooleanToggleGroup = function BooleanToggleGroup({
     return null;
   }
   const commonClass = classNames(
-    "w-full inline-flex items-center justify-center rounded py-[10px] px-4 text-sm font-medium  leading-4",
+    isSmaller ? "w-[49px] px-3 py-1.5" : "w-full py-[10px] px-4",
+    "inline-flex items-center justify-center rounded text-sm font-medium  leading-4",
     disabled && "cursor-not-allowed"
   );
+
   const selectedClass = classNames(commonClass, "bg-emphasis  text-emphasis");
   const unselectedClass = classNames(commonClass, "text-default hover:bg-subtle hover:text-emphasis");
   return (
@@ -43,7 +47,10 @@ export const BooleanToggleGroup = function BooleanToggleGroup({
       value={yesNoValue}
       type="single"
       disabled={disabled}
-      className="border-subtle flex space-x-2 rounded-md border p-1 rtl:space-x-reverse"
+      className={classNames(
+        "border-subtle flex space-x-2 rounded-md border p-1 rtl:space-x-reverse",
+        isSmaller && "space-x-1"
+      )}
       onValueChange={(yesNoValue: "yes" | "no") => {
         setYesNoValue(yesNoValue);
         onValueChange(boolean(yesNoValue));
