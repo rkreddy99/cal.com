@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { noop } from "lodash";
 import { useCallback, useState } from "react";
 import { Controller, FormProvider, useForm, useFormState } from "react-hook-form";
-import * as z from "zod";
+import { object as zodObject, string as zodString, ZodIssueCode } from "zod";
 
 import { classNames } from "@calcom/lib";
 import { CONSOLE_URL } from "@calcom/lib/constants";
@@ -17,14 +17,14 @@ type EnterpriseLicenseFormValues = {
 };
 
 const makeSchemaLicenseKey = (args: { callback: (valid: boolean) => void; onSuccessValidate: () => void }) =>
-  z.object({
+  zodObject({
     licenseKey: z
       .string()
       .uuid({
         message: "License key must follow UUID format: 8-4-4-4-12",
       })
       .superRefine(async (data, ctx) => {
-        const parse = z.string().uuid().safeParse(data);
+        const parse = zodString().uuid().safeParse(data);
         if (parse.success) {
           args.callback(true);
           const response = await fetch(`${CONSOLE_URL}/api/license?key=${data}`);
@@ -32,7 +32,7 @@ const makeSchemaLicenseKey = (args: { callback: (valid: boolean) => void; onSucc
           const json = await response.json();
           if (!json.valid) {
             ctx.addIssue({
-              code: z.ZodIssueCode.custom,
+              code: ZodIssueCode.custom,
               message: `License key ${json.message.toLowerCase()}`,
             });
           } else {

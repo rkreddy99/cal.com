@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { signIn } from "next-auth/react";
 import React from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import * as z from "zod";
+import { object as zodObject, string as zodString, ZodIssueCode, infer } from "zod";
 
 import { isPasswordValid } from "@calcom/features/auth/lib/isPasswordValid";
 import { WEBSITE_URL } from "@calcom/lib/constants";
@@ -36,19 +36,19 @@ export const AdminUserContainer = (props: React.ComponentProps<typeof AdminUser>
 export const AdminUser = (props: { onSubmit: () => void; onError: () => void; onSuccess: () => void }) => {
   const { t } = useLocale();
 
-  const formSchema = z.object({
+  const formSchema = zodObject({
     username: z
       .string()
       .refine((val) => val.trim().length >= 1, { message: t("at_least_characters", { count: 1 }) }),
-    email_address: z.string().email({ message: t("enter_valid_email") }),
-    full_name: z.string().min(3, t("at_least_characters", { count: 3 })),
-    password: z.string().superRefine((data, ctx) => {
+    email_address: zodString().email({ message: t("enter_valid_email") }),
+    full_name: zodString().min(3, t("at_least_characters", { count: 3 })),
+    password: zodString().superRefine((data, ctx) => {
       const isStrict = true;
       const result = isPasswordValid(data, true, isStrict);
       Object.keys(result).map((key: string) => {
         if (!result[key as keyof typeof result]) {
           ctx.addIssue({
-            code: z.ZodIssueCode.custom,
+            code: ZodIssueCode.custom,
             path: [key],
             message: key,
           });

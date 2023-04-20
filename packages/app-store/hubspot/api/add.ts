@@ -1,4 +1,4 @@
-import * as hubspot from "@hubspot/api-client";
+
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { WEBAPP_URL } from "@calcom/lib/constants";
@@ -8,9 +8,10 @@ import getAppKeysFromSlug from "../../_utils/getAppKeysFromSlug";
 const scopes = ["crm.objects.contacts.read", "crm.objects.contacts.write"];
 
 let client_id = "";
-const hubspotClient = new hubspot.Client();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  let hubspot = await import("@hubspot/api-client");
+  const hubspotClient = new hubspot.Client();
   if (req.method !== "GET") return res.status(405).json({ message: "Method not allowed" });
 
   const appKeys = await getAppKeysFromSlug("hubspot");

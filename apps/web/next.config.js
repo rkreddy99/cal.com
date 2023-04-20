@@ -4,6 +4,7 @@ const os = require("os");
 
 const { withAxiom } = require("next-axiom");
 const { i18n } = require("./next-i18next.config");
+const ImportTimingPlugin = require("./import-timing-plugin");
 
 if (!process.env.NEXTAUTH_SECRET) throw new Error("Please set NEXTAUTH_SECRET");
 if (!process.env.CALENDSO_ENCRYPTION_KEY) throw new Error("Please set CALENDSO_ENCRYPTION_KEY");
@@ -115,6 +116,7 @@ const nextConfig = {
     unoptimized: true,
   },
   webpack: (config, { webpack, buildId }) => {
+    config.plugins.push(new ImportTimingPlugin());
     config.plugins.push(
       new CopyWebpackPlugin({
         patterns: [

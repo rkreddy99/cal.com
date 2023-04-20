@@ -1,4 +1,3 @@
-import * as hubspot from "@hubspot/api-client";
 import type { TokenResponseIF } from "@hubspot/api-client/lib/codegen/oauth/models/TokenResponseIF";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -12,13 +11,15 @@ import getInstalledAppPath from "../../_utils/getInstalledAppPath";
 
 let client_id = "";
 let client_secret = "";
-const hubspotClient = new hubspot.Client();
 
 export type HubspotToken = TokenResponseIF & {
   expiryDate?: number;
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const hubspot = await import("@hubspot/api-client");
+  const hubspotClient = new hubspot.HubspotClient();
+
   const { code } = req.query;
 
   if (code && typeof code !== "string") {

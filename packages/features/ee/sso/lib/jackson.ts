@@ -1,4 +1,4 @@
-import jackson from "@boxyhq/saml-jackson";
+import { jackson } from "@boxyhq/saml-jackson";
 import type {
   IConnectionAPIController,
   IOAuthController,

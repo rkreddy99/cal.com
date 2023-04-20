@@ -1,4 +1,4 @@
-import * as OpenAPISnippet from "openapi-snippet";
+import { getEndpointSnippets } from "openapi-snippet";
 
 export const requestSnippets = {
   generators: {
@@ -71,7 +71,7 @@ export const SnippedGenerator = {
               //         let snippet;
               //         try {
               //           // set request snippet content
-              //           snippet = OpenAPISnippet.getEndpointSnippets(
+              //           snippet = getEndpointSnippets(
               //             spec,
               //             path,
               //             method,
@@ -104,7 +104,7 @@ export const SnippedGenerator = {
                     let snippet;
                     try {
                       // set request snippet content
-                      snippet = OpenAPISnippet.getEndpointSnippets(spec, path, method, targets).snippets[0]
+                      snippet = getEndpointSnippets(spec, path, method, targets).snippets[0]
                         .content;
                     } catch (err) {
                       // set to error in case it happens the npm package has some flaws
@@ -132,7 +132,7 @@ export const SnippedGenerator = {
                     let snippet;
                     try {
                       // set request snippet content
-                      snippet = OpenAPISnippet.getEndpointSnippets(spec, path, method, targets).snippets[0]
+                      snippet = getEndpointSnippets(spec, path, method, targets).snippets[0]
                         .content;
                     } catch (err) {
                       // set to error in case it happens the npm package has some flaws
@@ -160,7 +160,7 @@ export const SnippedGenerator = {
                     let snippet;
                     try {
                       // set request snippet content
-                      snippet = OpenAPISnippet.getEndpointSnippets(spec, path, method, targets).snippets[0]
+                      snippet = getEndpointSnippets(spec, path, method, targets).snippets[0]
                         .content;
                     } catch (err) {
                       // set to error in case it happens the npm package has some flaws
@@ -188,7 +188,7 @@ export const SnippedGenerator = {
                     let snippet;
                     try {
                       // set request snippet content
-                      snippet = OpenAPISnippet.getEndpointSnippets(spec, path, method, targets).snippets[0]
+                      snippet = getEndpointSnippets(spec, path, method, targets).snippets[0]
                         .content;
                     } catch (err) {
                       // set to error in case it happens the npm package has some flaws
@@ -216,7 +216,7 @@ export const SnippedGenerator = {
               //         let snippet;
               //         try {
               //           // set request snippet content
-              //           snippet = OpenAPISnippet.getEndpointSnippets(
+              //           snippet = getEndpointSnippets(
               //             spec,
               //             path,
               //             method,
@@ -248,7 +248,7 @@ export const SnippedGenerator = {
               //         let snippet;
               //         try {
               //           // set request snippet content
-              //           snippet = OpenAPISnippet.getEndpointSnippets(
+              //           snippet = getEndpointSnippets(
               //             spec,
               //             path,
               //             method,
@@ -280,7 +280,7 @@ export const SnippedGenerator = {
                     let snippet;
                     try {
                       // set request snippet content
-                      snippet = OpenAPISnippet.getEndpointSnippets(spec, path, method, targets).snippets[0]
+                      snippet = getEndpointSnippets(spec, path, method, targets).snippets[0]
                         .content;
                     } catch (err) {
                       // set to error in case it happens the npm package has some flaws
@@ -308,7 +308,7 @@ export const SnippedGenerator = {
                     let snippet;
                     try {
                       // set request snippet content
-                      snippet = OpenAPISnippet.getEndpointSnippets(spec, path, method, targets).snippets[0]
+                      snippet = getEndpointSnippets(spec, path, method, targets).snippets[0]
                         .content;
                     } catch (err) {
                       // set to error in case it happens the npm package has some flaws
@@ -336,7 +336,7 @@ export const SnippedGenerator = {
                     let snippet;
                     try {
                       // set request snippet content
-                      snippet = OpenAPISnippet.getEndpointSnippets(spec, path, method, targets).snippets[0]
+                      snippet = getEndpointSnippets(spec, path, method, targets).snippets[0]
                         .content;
                     } catch (err) {
                       // set to error in case it happens the npm package has some flaws

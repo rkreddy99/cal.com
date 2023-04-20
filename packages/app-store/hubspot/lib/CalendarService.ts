@@ -1,4 +1,4 @@
-import * as hubspot from "@hubspot/api-client";
+import { Client as HubspotClient } from "@hubspot/api-client";
 import type { BatchInputPublicAssociation } from "@hubspot/api-client/lib/codegen/crm/associations";
 import type { PublicObjectSearchRequest } from "@hubspot/api-client/lib/codegen/crm/contacts";
 import type { SimplePublicObjectInput } from "@hubspot/api-client/lib/codegen/crm/objects/meetings";
@@ -21,7 +21,7 @@ import type { CredentialPayload } from "@calcom/types/Credential";
 import getAppKeysFromSlug from "../../_utils/getAppKeysFromSlug";
 import type { HubspotToken } from "../api/callback";
 
-const hubspotClient = new hubspot.Client();
+const hubspotClient = new HubspotClient();
 
 export default class HubspotCalendarService implements Calendar {
   private url = "";

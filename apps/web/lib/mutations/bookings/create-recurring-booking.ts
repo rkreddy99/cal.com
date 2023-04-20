@@ -1,7 +1,7 @@
 import type { BookingCreateBody } from "@calcom/prisma/zod-utils";
 import type { AppsStatus } from "@calcom/types/Calendar";
 
-import * as fetch from "@lib/core/http/fetch-wrapper";
+import { post } from "@lib/core/http/fetch-wrapper";
 import type { BookingResponse } from "@lib/types/booking";
 
 type ExtendedBookingCreateBody = BookingCreateBody & {
@@ -35,7 +35,7 @@ const createRecurringBooking = async (data: ExtendedBookingCreateBody[]) => {
       appsStatus = Object.values(calcAppsStatus);
     }
 
-    const response = await fetch.post<ExtendedBookingCreateBody, BookingResponse>("/api/book/event", {
+    const response = await post<ExtendedBookingCreateBody, BookingResponse>("/api/book/event", {
       ...booking,
       appsStatus,
       allRecurringDates,
