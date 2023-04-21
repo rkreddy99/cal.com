@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { signIn } from "next-auth/react";
 import React from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import { object as zodObject, string as zodString, ZodIssueCode, zodInfer } from "zod";
+import { object as zodObject, string as zodString, ZodIssueCode, infer as zodInfer } from "zod";
 
 import { isPasswordValid } from "@calcom/features/auth/lib/isPasswordValid";
 import { WEBSITE_URL } from "@calcom/lib/constants";
