@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { signIn } from "next-auth/react";
 import React from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import { object as zodObject, string as zodString, ZodIssueCode, infer } from "zod";
+import { object as zodObject, string as zodString, ZodIssueCode, zodInfer } from "zod";
 
 import { isPasswordValid } from "@calcom/features/auth/lib/isPasswordValid";
 import { WEBSITE_URL } from "@calcom/lib/constants";
@@ -69,7 +69,7 @@ export const AdminUser = (props: { onSubmit: () => void; onError: () => void; on
     props.onError();
   };
 
-  const onSubmit = formMethods.handleSubmit(async (data: infer<typeof formSchema>) => {
+  const onSubmit = formMethods.handleSubmit(async (data: zodInfer<typeof formSchema>) => {
     props.onSubmit();
     const response = await fetch("/api/auth/setup", {
       method: "POST",
