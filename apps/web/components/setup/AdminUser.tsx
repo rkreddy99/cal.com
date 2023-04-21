@@ -37,8 +37,7 @@ export const AdminUser = (props: { onSubmit: () => void; onError: () => void; on
   const { t } = useLocale();
 
   const formSchema = zodObject({
-    username: z
-      .string()
+    username: zodString()
       .refine((val) => val.trim().length >= 1, { message: t("at_least_characters", { count: 1 }) }),
     email_address: zodString().email({ message: t("enter_valid_email") }),
     full_name: zodString().min(3, t("at_least_characters", { count: 3 })),
@@ -70,7 +69,7 @@ export const AdminUser = (props: { onSubmit: () => void; onError: () => void; on
     props.onError();
   };
 
-  const onSubmit = formMethods.handleSubmit(async (data: z.infer<typeof formSchema>) => {
+  const onSubmit = formMethods.handleSubmit(async (data: infer<typeof formSchema>) => {
     props.onSubmit();
     const response = await fetch("/api/auth/setup", {
       method: "POST",

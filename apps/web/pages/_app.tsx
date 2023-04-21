@@ -1,13 +1,6 @@
-import { trpc } from "@calcom/trpc/react";
+import '../styles/globals.css'
+import type { AppProps } from 'next/app'
 
-import type { AppProps } from "@lib/app-providers";
-
-import "../styles/globals.css";
-
-function MyApp(props: AppProps) {
-  const { Component, pageProps } = props;
-  if (Component.PageWrapper !== undefined) return Component.PageWrapper(props);
-  return <Component {...pageProps} />;
+export default function App({ Component, pageProps }: AppProps) {
+  return <Component {...pageProps} />
 }
-
-export default trpc.withTRPC(MyApp);
