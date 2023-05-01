@@ -230,7 +230,7 @@ function Field({
                         type="button"
                         onClick={() => handleRemoveOptions(index)}
                         aria-label={t("remove")}>
-                        <X />
+                        <X className="h-4 w-4" />
                       </button>
                     }
                   />
@@ -258,7 +258,7 @@ function Field({
               render={({ field: { value, onChange } }) => {
                 return (
                   <BooleanToggleGroupField
-                    isSmaller
+                    variant="small"
                     disabled={!!router}
                     label={t("required")}
                     value={value}

@@ -17,17 +17,9 @@ export type HorizontalTabItemProps = {
   linkProps?: Omit<ComponentProps<typeof Link>, "href">;
   icon?: SVGComponent;
   avatar?: string;
-  isRoutingFormsTabs?: boolean;
 };
 
-const HorizontalTabItem = function ({
-  name,
-  href,
-  linkProps,
-  avatar,
-  isRoutingFormsTabs,
-  ...props
-}: HorizontalTabItemProps) {
+const HorizontalTabItem = function ({ name, href, linkProps, avatar, ...props }: HorizontalTabItemProps) {
   const { t, isLocaleReady } = useLocale();
   const { asPath } = useRouter();
 
@@ -39,14 +31,9 @@ const HorizontalTabItem = function ({
       href={href}
       {...linkProps}
       className={classNames(
-        isCurrent
-          ? isRoutingFormsTabs
-            ? "bg-emphasis text-emphasis"
-            : "bg-subtle text-emphasis"
-          : "hover:bg-subtle hover:text-emphasis text-default",
+        isCurrent ? "bg-emphasis text-emphasis" : "hover:bg-subtle hover:text-emphasis text-default",
         "inline-flex items-center justify-center whitespace-nowrap rounded-[6px] p-2 text-sm font-medium leading-4 md:mb-0",
         props.disabled && "pointer-events-none !opacity-30",
-        isRoutingFormsTabs && "py-2.5 px-4",
         props.className
       )}
       aria-current={isCurrent ? "page" : undefined}>

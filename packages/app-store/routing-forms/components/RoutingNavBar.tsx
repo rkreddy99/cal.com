@@ -27,7 +27,7 @@ export default function RoutingNavBar({
   ];
   return (
     <div className="mb-4">
-      <HorizontalTabs isRoutingFormsTabs tabs={tabs} />
+      <HorizontalTabs tabs={tabs} />
     </div>
   );
 }
