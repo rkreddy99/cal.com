@@ -2,6 +2,7 @@ import type { InputHTMLAttributes } from "react";
 import React, { forwardRef } from "react";
 
 import classNames from "@calcom/lib/classNames";
+import { trpc } from "@calcom/trpc/react";
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
   label?: React.ReactNode;
@@ -16,6 +17,7 @@ type Props = InputHTMLAttributes<HTMLInputElement> & {
 const CheckboxField = forwardRef<HTMLInputElement, Props>(
   ({ label, description, error, disabled, ...rest }, ref) => {
     const descriptionAsLabel = !label || rest.descriptionAsLabel;
+    const { data: user } = trpc.viewer.me.useQuery();
     return (
       <div className="block items-center sm:flex">
         {label && (
@@ -53,13 +55,11 @@ const CheckboxField = forwardRef<HTMLInputElement, Props>(
                     type="checkbox"
                     disabled={disabled}
                     className={classNames(
-                      "text-primary-600 focus:ring-primary-500 border-default bg-default h-4 w-4 rounded ltr:mr-2 rtl:ml-2",
-                      !error && disabled
-                        ? "bg-gray-300 checked:bg-gray-300"
-                        : "hover:bg-subtle checked:bg-gray-800",
+                      "border-default h-4 w-4 rounded ltr:mr-2 rtl:ml-2",
                       error && "border-red-800 checked:bg-red-800 hover:bg-red-400",
                       rest.className
                     )}
+                    style={{ color: `${user?.brandColor}` }}
                   />
                 </div>
                 <span className={classNames("text-sm", rest.descriptionClassName)}>{description}</span>

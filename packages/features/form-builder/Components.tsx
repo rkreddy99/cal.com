@@ -9,6 +9,7 @@ import type {
 import { classNames } from "@calcom/lib";
 import { useLocale } from "@calcom/lib/hooks/useLocale";
 import type { BookingFieldType } from "@calcom/prisma/zod-utils";
+import { trpc } from "@calcom/trpc/react";
 import {
   PhoneInput,
   AddressInput,
@@ -134,8 +135,6 @@ export const Components: Record<BookingFieldType, Component> = {
       const placeholder = props.placeholder;
       const { t } = useLocale();
       value = value || [];
-      const inputClassName =
-        "dark:placeholder:text-darkgray-600 focus:border-brand-default border-subtle  block w-full rounded-md border-default text-sm focus:ring-black disabled:bg-emphasis disabled:hover:cursor-not-allowed dark:bg-transparent dark:selection:bg-green-500 disabled:dark:text-subtle";
       return (
         <>
           {value.length ? (
@@ -149,13 +148,14 @@ export const Components: Record<BookingFieldType, Component> = {
                     <EmailField
                       disabled={readOnly}
                       value={value[index]}
+                      containerClassName="[&>*:first-child]:border [&>*:first-child]:border-default hover:[&>*:first-child]:border-emphasis"
+                      className="border-0"
                       onChange={(e) => {
                         value[index] = e.target.value;
                         setValue(value);
                       }}
-                      className={classNames(inputClassName, "border-r-0")}
                       addOnClassname={classNames(
-                        "border-default border block border-l-0 disabled:bg-emphasis disabled:hover:cursor-not-allowed bg-transparent disabled:text-subtle border-subtle "
+                        "border-0 block disabled:bg-emphasis disabled:hover:cursor-not-allowed bg-transparent disabled:text-subtle border-subtle"
                       )}
                       placeholder={placeholder}
                       label={<></>}
@@ -240,6 +240,7 @@ export const Components: Record<BookingFieldType, Component> = {
     propsType: "multiselect",
     factory: ({ options, readOnly, setValue, value }) => {
       value = value || [];
+      const { data: user } = trpc.viewer.me.useQuery();
       return (
         <div>
           {options.map((option, i) => {
@@ -255,7 +256,8 @@ export const Components: Record<BookingFieldType, Component> = {
                     }
                     setValue(newValue);
                   }}
-                  className="dark:bg-darkgray-300 border-subtle text-emphasis h-4 w-4 rounded focus:ring-black ltr:mr-2 rtl:ml-2"
+                  className="border-subtle h-4 w-4 rounded ltr:mr-2 rtl:ml-2"
+                  style={{ color: `${user?.brandColor}` }}
                   value={option.value}
                   checked={value.includes(option.value)}
                 />
@@ -301,6 +303,7 @@ export const Components: Record<BookingFieldType, Component> = {
           });
         }
       }, [options, setValue, value]);
+      const { data: user } = trpc.viewer.me.useQuery();
 
       return (
         <div>
@@ -314,7 +317,8 @@ export const Components: Record<BookingFieldType, Component> = {
                         type="radio"
                         disabled={readOnly}
                         name={name}
-                        className="dark:bg-darkgray-300 border-subtle text-emphasis h-4 w-4 focus:ring-black ltr:mr-2 rtl:ml-2"
+                        className="dark:bg-darkgray-300 border-default focus:border-default focus:ring-emphasis h-4 w-4 cursor-pointer border focus:ring-2 ltr:mr-2 rtl:ml-2"
+                        style={{ color: `${user?.brandColor}` }}
                         value={option.value}
                         onChange={(e) => {
                           setValue({
