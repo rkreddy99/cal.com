@@ -66,7 +66,7 @@ export const BooleanToggleGroup = function BooleanToggleGroup({
       type="single"
       disabled={disabled}
       className={classNames(
-        "border-subtle flex space-x-2 rounded-md border p-1 rtl:space-x-reverse",
+        "border-subtle flex h-9 space-x-2 rounded-md border p-1 rtl:space-x-reverse",
         getVariantStyles(variant).toggleGroupPrimitiveClass
       )}
       onValueChange={(yesNoValue: "yes" | "no") => {
