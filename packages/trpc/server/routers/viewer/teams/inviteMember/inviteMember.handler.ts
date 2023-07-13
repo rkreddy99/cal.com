@@ -30,6 +30,63 @@ type InviteMemberOptions = {
   input: TInviteMemberInputSchema;
 };
 
+export const resendInvitationToPendingUserHandler = async ({ctx, input}: InviteMemberOptions) => {
+  const team = await getTeamOrThrow(input.teamId, input.isOrg);
+
+  const translation = await getTranslation(input.language ?? "en", "common");
+
+  const emailsToInvite = await getEmailsToInvite(input.usernameOrEmail);
+
+  for (const usernameOrEmail of emailsToInvite) {
+    
+    const invitee = await getUserToInviteOrThrowIfExists({
+      usernameOrEmail,
+      orgId: input.teamId,
+      isOrg: input.isOrg,
+    });
+
+    if (invitee) {
+      let sendTo = usernameOrEmail;
+      if (!isEmail(usernameOrEmail)) {
+        sendTo = invitee.email;
+      }
+      // inform user of membership by email
+      if (input.sendEmailInvitation && ctx?.user?.name && team?.name) {
+        const inviteTeamOptions = {
+          joinLink: `${WEBAPP_URL}/auth/login?callbackUrl=/settings/teams`,
+          isCalcomMember: true,
+        };
+        /**
+         * Here we want to redirect to a differnt place if onboarding has been completed or not. This prevents the flash of going to teams -> Then to onboarding - also show a differnt email template.
+         * This only changes if the user is a CAL user and has not completed onboarding and has no password
+         */
+        if (!invitee.completedOnboarding && !invitee.password && invitee.identityProvider === "CAL") {
+          const token = randomBytes(32).toString("hex");
+          await prisma.verificationToken.create({
+            data: {
+              identifier: usernameOrEmail,
+              token,
+              expires: new Date(new Date().setHours(168)), // +1 week
+            },
+          });
+
+          inviteTeamOptions.joinLink = `${WEBAPP_URL}/signup?token=${token}&callbackUrl=/getting-started`;
+          inviteTeamOptions.isCalcomMember = false;
+        }
+
+        await sendTeamInviteEmail({
+          language: translation,
+          from: ctx.user.name,
+          to: sendTo,
+          teamName: team.name,
+          ...inviteTeamOptions,
+          isOrg: input.isOrg,
+        });
+      }
+    } 
+  }
+}
+
 export const inviteMemberHandler = async ({ ctx, input }: InviteMemberOptions) => {
   const team = await getTeamOrThrow(input.teamId, input.isOrg);
   const { autoAcceptEmailDomain, orgVerified } = getIsOrgVerified(input.isOrg, team);

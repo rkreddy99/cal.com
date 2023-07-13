@@ -28,7 +28,7 @@ import {
   showToast,
   Tooltip,
 } from "@calcom/ui";
-import { ExternalLink, MoreHorizontal, Edit2, Lock, UserX } from "@calcom/ui/components/icon";
+import { ExternalLink, MoreHorizontal, Edit2, Lock, UserX, Send } from "@calcom/ui/components/icon";
 
 import MemberChangeRoleModal from "./MemberChangeRoleModal";
 import TeamAvailabilityModal from "./TeamAvailabilityModal";
@@ -53,7 +53,7 @@ const checkIsOrg = (team: Props["team"]) => {
 };
 
 export default function MemberListItem(props: Props) {
-  const { t } = useLocale();
+  const { t, i18n } = useLocale();
   const orgBranding = useOrgBrandingValues();
 
   const utils = trpc.useContext();
@@ -73,6 +73,8 @@ export default function MemberListItem(props: Props) {
       showToast(err.message, "error");
     },
   });
+
+  const resendInvitationToPendingUserMutation = trpc.viewer.teams.resendInvitationToPendingUser.useMutation();
 
   const ownersInTeam = () => {
     const { members } = props.team;
@@ -110,6 +112,7 @@ export default function MemberListItem(props: Props) {
 
   const urlWithoutProtocol = WEBAPP_URL.replace(/^https?:\/\//, "");
   const bookingLink = !!props.member.username && `${urlWithoutProtocol}/${props.member.username}`;
+  const usernameOrEmail = props.member.email || props.member.username
 
   return (
     <li className="divide-subtle divide-y px-5">
@@ -219,6 +222,49 @@ export default function MemberListItem(props: Props) {
                         {t("remove")}
                       </DropdownItem>
                     </DropdownMenuItem>
+                    {!props.member.accepted &&  (<><DropdownMenuItem>
+                      <DropdownItem
+                        type="button"
+                        onClick={() => {
+                          resendInvitationToPendingUserMutation.mutate(
+                            {
+                              teamId: props.team?.id,
+                              language: i18n.language,
+                              role: props.member.role,
+                              usernameOrEmail: usernameOrEmail!,
+                              sendEmailInvitation: true,
+                            },
+                            {
+                              onSuccess: async (data) => {
+                                await utils.viewer.teams.get.invalidate();
+                                if (data?.sendEmailInvitation) {
+                                  if (Array.isArray(data.usernameOrEmail)) {
+                                    showToast(
+                                      t("email_invite_team_bulk", {
+                                        userCount: data.usernameOrEmail.length,
+                                      }),
+                                      "success"
+                                    );
+                                  } else {
+                                    showToast(
+                                      t("email_invite_team", {
+                                        email: data.usernameOrEmail,
+                                      }),
+                                      "success"
+                                    );
+                                  }
+                                }
+                              },
+                              onError: (error) => {
+                                showToast(error.message, "error");
+                              },
+                            }
+                          );
+                        }}
+                        StartIcon={Send}>
+                        {t("resend_invitation")}
+                      </DropdownItem>
+                    </DropdownMenuItem></>)}
                   </DropdownMenuContent>
                 </Dropdown>
               )}

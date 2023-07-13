@@ -26,6 +26,7 @@ type TeamsRouterHandlerCache = {
   update?: typeof import("./update.handler").updateHandler;
   delete?: typeof import("./delete.handler").deleteHandler;
   removeMember?: typeof import("./removeMember.handler").removeMemberHandler;
+  resendInvitationToPendingUser?: typeof import("./inviteMember/inviteMember.handler").resendInvitationToPendingUserHandler;
   inviteMember?: typeof import("./inviteMember/inviteMember.handler").inviteMemberHandler;
   acceptOrLeave?: typeof import("./acceptOrLeave.handler").acceptOrLeaveHandler;
   changeMemberRole?: typeof import("./changeMemberRole.handler").changeMemberRoleHandler;
@@ -142,6 +143,24 @@ export const viewerTeamsRouter = router({
     }
 
     return UNSTABLE_HANDLER_CACHE.removeMember({
+      ctx,
+      input,
+    });
+  }),
+
+  resendInvitationToPendingUser: authedProcedure.input(ZInviteMemberInputSchema).mutation(async ({ ctx, input }) => {
+    if (!UNSTABLE_HANDLER_CACHE.resendInvitationToPendingUser) {
+      UNSTABLE_HANDLER_CACHE.resendInvitationToPendingUser = await import("./inviteMember/inviteMember.handler").then(
+        (mod) => mod.resendInvitationToPendingUserHandler
+      );
+    }
+
+    // Unreachable code but required for type safety
+    if (!UNSTABLE_HANDLER_CACHE.resendInvitationToPendingUser) {
+      throw new Error("Failed to load resend invitation handler");
+    }
+
+    return UNSTABLE_HANDLER_CACHE.resendInvitationToPendingUser({
       ctx,
       input,
     });
