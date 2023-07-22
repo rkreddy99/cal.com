@@ -6,6 +6,7 @@ import { router } from "../../../trpc";
 import { ZChangePasswordInputSchema } from "./changePassword.schema";
 import { ZSendVerifyEmailCodeSchema } from "./sendVerifyEmailCode.schema";
 import { ZVerifyPasswordInputSchema } from "./verifyPassword.schema";
+import { ZVerifyTokenSchema } from "./verifyToken.schema";
 
 type AuthRouterHandlerCache = {
   changePassword?: typeof import("./changePassword.handler").changePasswordHandler;
