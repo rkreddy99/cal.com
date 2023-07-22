@@ -66,10 +66,7 @@ export const BookEventForm = ({ onCancel }: BookEventFormProps) => {
   const setFormValues = useBookerStore((state) => state.setFormValues);
   const seatedEventData = useBookerStore((state) => state.seatedEventData);
   const verifiedEmail = useBookerStore((state) => state.verifiedEmail);
-<<<<<<< HEAD
   const setVerifiedEmail = useBookerStore((state) => state.setVerifiedEmail);
-=======
->>>>>>> 3c868eb44 (booker email verification changes)
   const isRescheduling = !!rescheduleUid && !!bookingData;
   const event = useEvent();
   const eventType = event.data;
@@ -376,12 +373,8 @@ export const BookEventForm = ({ onCancel }: BookEventFormProps) => {
     return <Alert severity="warning" message={t("error_booking_event")} />;
   }
 
-<<<<<<< HEAD
   const renderConfirmNotVerifyEmailButtonCond =
     !eventType?.requiresBookerEmailVerification || (email && verifiedEmail && verifiedEmail === email);
-=======
-  const renderConfirmNotVerifyEmailButtonCond = !eventType?.requiresBookerEmailVerification || (email && verifiedEmail && verifiedEmail === email)
->>>>>>> 3c868eb44 (booker email verification changes)
 
   return (
     <div className="flex h-full flex-col">
@@ -432,7 +425,6 @@ export const BookEventForm = ({ onCancel }: BookEventFormProps) => {
             color="primary"
             loading={createBookingMutation.isLoading || createRecurringBookingMutation.isLoading}
             data-testid={rescheduleUid ? "confirm-reschedule-button" : "confirm-book-button"}>
-<<<<<<< HEAD
             {rescheduleUid
               ? t("reschedule")
               : renderConfirmNotVerifyEmailButtonCond
@@ -451,13 +443,6 @@ export const BookEventForm = ({ onCancel }: BookEventFormProps) => {
         }}
         isUserSessionRequiredToVerify={false}
       />
-=======
-            {rescheduleUid ? t("reschedule") : renderConfirmNotVerifyEmailButtonCond ? t("confirm") : "Verify Email" }
-          </Button>
-        </div>
-      </Form>
-      <EmailVerificationModal visible={isEmailVerificationModalVisible} onCancel={() => setEmailVerificationModalVisible(false)} email={email} />
->>>>>>> 3c868eb44 (booker email verification changes)
     </div>
   );
 };
