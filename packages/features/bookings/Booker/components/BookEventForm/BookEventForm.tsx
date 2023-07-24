@@ -24,6 +24,7 @@ import { getBookingFieldsWithSystemFields } from "@calcom/features/bookings/lib/
 import getBookingResponsesSchema, {
   getBookingResponsesPartialSchema,
 } from "@calcom/features/bookings/lib/getBookingResponsesSchema";
+import { VerifyCodeDialog } from "@calcom/features/ee/organizations/components/CreateANewOrganizationForm";
 import { getFullName } from "@calcom/features/form-builder/utils";
 import { bookingSuccessRedirect } from "@calcom/lib/bookingSuccessRedirect";
 import { MINUTES_TO_BOOK } from "@calcom/lib/constants";
@@ -37,7 +38,6 @@ import { useBookerStore } from "../../store";
 import { useEvent } from "../../utils/event";
 import { BookingFields } from "./BookingFields";
 import { FormSkeleton } from "./Skeleton";
-import { EmailVerificationModal } from "@calcom/features/bookings/Booker/components/BookEventForm/EmailVerificationModal";
 
 type BookEventFormProps = {
   onCancel?: () => void;
